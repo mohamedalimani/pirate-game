@@ -1,0 +1,13 @@
+s[0] = " " ;
+s[1] = "AHOY Cap'n" ; 
+s[2] = "enemies approching" ; 
+s[3] = "WE'VE BEEN HIT Cap'n !" ;
+s[4] = "one Down sir " ;
+s[5] = "sir we're out of rum!" ;
+s[6] = "RELOADING" ;
+void speak(){
+image(speech,player.x-140,player.y-70,150,80) ;
+fill(0) ;
+textSize(12);
+  text(s[textNum],player.x-100,player.y-50) ;
+}
