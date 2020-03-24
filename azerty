@@ -1,0 +1,42 @@
+import cv2
+import concurrent.futures
+import time
+import numpy as np
+
+# this is the thing and it's working
+# notes : compare between threading and multiprocessing execution time
+ret = True
+vid_name = input("enter video name (with it's extension) ...\n")
+vid_dir = "ressources/" + vid_name
+vid = cv2.VideoCapture(vid_dir)
+frameCount = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
+frameHeight = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+frameWidth = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+frames = np.empty((10, frameHeight, frameWidth, 3), np.dtype('uint8'))
+haarCascades = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+
+
+def read_frame():
+    re, frame = vid.read()
+    return frame
+
+
+def detect(fr):
+    face = haarCascades.detectMultiScale(fr, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    return face
+
+
+t1 = time.perf_counter()
+for x in range(10):
+    frames[x] = read_frame()
+with concurrent.futures.ProcessPoolExecutor() as executor:
+    a = executor.map(detect, frames)
+    for [x, y, w, h] in a:
+        print(x, y, w, h)
+t2 = time.perf_counter()
+print(f"finished in {round(t2-t1, 2)} seconds")
+
+vid.release()
+cv2.destroyAllWindows()
+print("everything is fine for now ...")
+
